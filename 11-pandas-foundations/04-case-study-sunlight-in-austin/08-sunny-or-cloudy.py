@@ -11,20 +11,58 @@ INSTRUCTIONS
 100XP
 INSTRUCTIONS
 100XP
-Use .loc[] to select sunny days and assign to sunny. If 'sky_condition' equals 'CLR', then the day is sunny.
-Use .loc[] to select overcast days and assign to overcast. If 'sky_condition' contains 'OVC', then the day is overcast.
-Resample sunny and overcast and aggregate by the maximum (.max()) daily ('D') temperature. Assign to sunny_daily_max and overcast_daily_max.
-Print the difference between the mean of sunny_daily_max and overcast_daily_max. This has already been done for you, so click 'Submit Answer' to view the result!
+Instruction 1/3
+Get the cases in df_clean where the sky is clear. That is, when 'sky_condition' equals 'CLR', assigning to is_sky_clear.
+Use .loc[] to filter df_clean by is_sky_clear, assigning to sunny.
+Resample sunny by day ('D'), and take the max to find the maximum daily temperature.
+
+Instruction 2/3
+Get the cases in df_clean where the sky is overcast. Using .str.contains(), find when 'sky_condition' contains 'OVC', assigning to is_sky_overcast.
+Use .loc[] to filter df_clean by is_sky_overcast, assigning to overcast.
+Resample overcast by day ('D'), and take the max to find the maximum daily temperature.
+
+Instruction 3/§
+Calculate the mean of sunny_daily_max, assigning to sunny_daily_max_mean.
+Calculate the mean of overcast_daily_max, assigning to overcast_daily_max_mean.
+Print sunny_daily_max_mean minus overcast_daily_max_mean. How much hotter are sunny days?
 '''
-# Select days that are sunny: sunny
-sunny = df_clean.loc[df_clean['sky_condition'] == 'CLR']
+# Using df_clean, when is sky_condition 'CLR'?
+is_sky_clear = df_clean['sky_condition']=='CLR'
 
-# Select days that are overcast: overcast
-overcast = df_clean.loc[df_clean['sky_condition'].str.contains('OVC')]
+# Filter df_clean using is_sky_clear
+sunny = df_clean.loc[is_sky_clear]
 
-# Resample sunny and overcast, aggregating by maximum daily temperature
+# Resample sunny by day then calculate the max
 sunny_daily_max = sunny.resample('D').max()
+
+# See the result
+sunny_daily_max.head()
+
+# Using df_clean, when does sky_condition contain 'OVC'?
+is_sky_overcast = df_clean['sky_condition'].str.contains('OVC')
+
+# Filter df_clean using is_sky_overcast
+overcast = df_clean.loc[is_sky_overcast]
+
+# Resample overcast by day then calculate the max
 overcast_daily_max = overcast.resample('D').max()
 
-# Print the difference between the mean of sunny_daily_max and overcast_daily_max
-print(sunny_daily_max.mean() - overcast_daily_max.mean())
+# See the result
+overcast_daily_max.head()
+
+# From previous steps
+is_sky_clear = df_clean['sky_condition']=='CLR'
+sunny = df_clean.loc[is_sky_clear]
+sunny_daily_max = sunny.resample('D').max()
+is_sky_overcast = df_clean['sky_condition'].str.contains('OVC')
+overcast = df_clean.loc[is_sky_overcast]
+overcast_daily_max = overcast.resample('D').max()
+
+# Calculate the mean of sunny_daily_max
+sunny_daily_max_mean = sunny_daily_max.mean()
+
+# Calculate the mean of overcast_daily_max
+overcast_daily_max_mean = overcast_daily_max.mean()
+
+# Print the difference (sunny minus overcast)
+print(sunny_daily_max_mean - overcast_daily_max_mean)
